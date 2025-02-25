@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporting Microservice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-link:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Reporting Microservice</h1>
+    </header>
+    <div class="container">
+        <h2>Overview</h2>
+        <p>This microservice generates reports for administration based on attendance and payroll data.</p>
+        
+        <h2>APIs</h2>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Description</th>
+                <th>Request Body</th>
+                <th>Response Body</th>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/reports/attendance</td>
+                <td>Generate attendance reports.</td>
+                <td>N/A</td>
+                <td>{ "attendanceReport": [...] }</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/reports/salary</td>
+                <td>Generate salary reports.</td>
+                <td>N/A</td>
+                <td>{ "salaryReport": [...] }</td>
+            </tr>
+        </table>
+
+        <h2>Pseudocode for Methods</h2>
+        <pre>
+        // Generate attendance report
+        function generateAttendanceReport() {
+            // Fetch attendance data from database
+            // Format data into report
+            // Return report
+        }
+
+        // Generate salary report
+        function generateSalaryReport() {
+            // Fetch salary data from database
+            // Format data into report
+            // Return report
+        }
+        </pre>
+
+        <h2>Interactions</h2>
+        <p>This microservice pulls data from the Payroll Microservice and Clocking System Microservice to generate reports.</p>
+
+        <a class="back-link" href="index.html">Back to Home</a>
+    </div>
+</body>
+</html>
