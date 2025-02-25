@@ -12,47 +12,31 @@
             background-color: #f4f4f4;
         }
         header {
-            background: #007BFF;
-            color: white;
-            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
             text-align: center;
+            padding: 1rem 0;
         }
-        h1 {
-            margin: 0;
+        main {
+            padding: 2rem;
         }
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .back-link:hover {
-            background: #0056b3;
+        h1, h2, h3 {
+            color: #333;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin: 1rem 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 1rem;
             text-align: left;
         }
         th {
-            background-color: #007BFF;
-            color: white;
+            background-color: #f4f4f4;
         }
     </style>
 </head>
@@ -60,56 +44,101 @@
     <header>
         <h1>Payroll Microservice</h1>
     </header>
-    <div class="container">
-        <h2>Overview</h2>
-        <p>This microservice calculates and manages employee salaries based on attendance.</p>
+    <main>
+        <h2>Responsibilities</h2>
+        <p>Calculate salaries based on hours worked and day rate, generate payslips with salary details and deductions, and integrate with the clocking system microservice for work hour data.</p>
         
-        <h2>APIs</h2>
+        <h2>Endpoints</h2>
+        <ul>
+            <li>POST /generate-payslip - Generate payslip for an employee.</li>
+            <li>GET /payslip/{employeeId} - Retrieve payslip details for a specific employee.</li>
+        </ul>
+        
+        <h2>Database Models</h2>
+        <h3>Payslip Table</h3>
         <table>
             <tr>
-                <th>Method</th>
-                <th>Endpoint</th>
-                <th>Description</th>
-                <th>Request Body</th>
-                <th>Response Body</th>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
             </tr>
             <tr>
-                <td>POST</td>
-                <td>/calculate-salary</td>
-                <td>Calculate salary based on attendance.</td>
-                <td>{ "employeeId": 1 }</td>
-                <td>{ "salary": 3000, "message": "Salary calculated successfully." }</td>
+                <td>payslip_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
             </tr>
             <tr>
-                <td>GET</td>
-                <td>/salary/{employeeId}</td>
-                <td>Retrieve salary details.</td>
-                <td>N/A</td>
-                <td>{ "employeeId": 1, "salary": 3000 }</td>
+                <td>employee_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Employee)</td>
+            </tr>
+            <tr>
+                <td>salary</td>
+                <td>DECIMAL(10, 2)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>deductions</td>
+                <td>DECIMAL(10, 2)</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>net_salary</td>
+                <td>DECIMAL(10, 2)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>pay_date</td>
+                <td>DATE</td>
+                <td>NOT NULL</td>
             </tr>
         </table>
-
-        <h2>Pseudocode for Methods</h2>
+        
+        <h2>Essential Methods and Helpers</h2>
         <pre>
-        // Calculate salary based on attendance
-        function calculateSalary(employeeId) {
-            // Fetch attendance records
-            // Calculate salary based on day rate
-            // Save salary details to database
-            // Return success or error message
-        }
+public class PayrollService
+{
+    private readonly PayslipRepository _payslipRepository;
+    private readonly ClockingSystemService _clockingSystemService;
 
-        // Retrieve salary details
-        function getSalary(employeeId) {
-            // Fetch salary details from database
-            // Return salary information
-        }
+    public PayrollService(PayslipRepository payslipRepository, ClockingSystemService clockingSystemService)
+    {
+        _payslipRepository = payslipRepository;
+        _clockingSystemService = clockingSystemService;
+    }
+
+    public Payslip GeneratePayslip(int employeeId)
+    {
+        var workHours = _clockingSystemService.GetWorkHours(employeeId);
+        var totalHours = workHours.Sum(h => (h.ClockOutTime - h.ClockInTime)?.TotalHours ?? 0);
+        var salary = CalculateSalary(totalHours);
+        var deductions = CalculateDeductions(totalHours);
+        var netSalary = salary - deductions;
+
+        var payslip = new Payslip
+        {
+            EmployeeId = employeeId,
+            Salary = salary,
+            Deductions = deductions,
+            NetSalary = netSalary,
+            PayDate = DateTime.Now
+        };
+
+        return _payslipRepository.Add(payslip);
+    }
+
+    private decimal CalculateSalary(double totalHours)
+    {
+        const decimal dayRate = 100m; // Example day rate
+        return (decimal)totalHours * dayRate;
+    }
+
+    private decimal CalculateDeductions(double totalHours)
+    {
+        return 0; // Example: No deductions
+    }
+}
         </pre>
-
-        <h2>Interactions</h2>
-        <p>This microservice interacts with the Clocking System Microservice to get attendance data.</p>
-
-        <a class="back-link" href="index.html">Back to Home</a>
-    </div>
+    </main>
 </body>
 </html>

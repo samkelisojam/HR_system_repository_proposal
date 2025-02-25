@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Management Microservice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        main {
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Resource Management Microservice</h1>
+    </header>
+    <main>
+        <h2>Responsibilities</h2>
+        <p>Manage resources required by employees to perform their work, track resource allocation and availability.</p>
+        
+        <h2>Endpoints</h2>
+        <ul>
+            <li>POST /allocate-resource - Allocate a resource to an employee.</li>
+            <li>POST /release-resource - Release a resource from an employee.</li>
+            <li>GET /resources - Retrieve a list of available resources.</li>
+        </ul>
+        
+        <h2>Database Models</h2>
+        <h3>Resource Table</h3>
+        <table>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
+            </tr>
+            <tr>
+                <td>resource_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
+            </tr>
+            <tr>
+                <td>resource_name</td>
+                <td>VARCHAR(100)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>quantity_available</td>
+                <td>INT</td>
+                <td>NOT NULL</td>
+            </tr>
+        </table>
+        
+        <h3>Resource Allocation Table</h3>
+        <table>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
+            </tr>
+            <tr>
+                <td>allocation_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
+            </tr>
+            <tr>
+                <td>employee_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Employee)</td>
+            </tr>
+            <tr>
+                <td>resource_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Resource)</td>
+            </tr>
+            <tr>
+                <td>allocation_date</td>
+                <td>DATE</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>return_date</td>
+                <td>DATE</td>
+                <td></td>
+            </tr>
+        </table>
+        
+        <h2>Essential Methods and Helpers</h2>
+        <pre>
+public class ResourceManagementService
+{
+    private readonly ResourceRepository _resourceRepository;
+    private readonly ResourceAllocationRepository _resourceAllocationRepository;
+
+    public ResourceManagementService(ResourceRepository resourceRepository, ResourceAllocationRepository resourceAllocationRepository)
+    {
+        _resourceRepository = resourceRepository;
+        _resourceAllocationRepository = resourceAllocationRepository;
+    }
+
+    public Resource AllocateResource(int employeeId, int resourceId)
+    {
+        var resource = _resourceRepository.GetById(resourceId);
+        if (resource.QuantityAvailable > 0)
+        {
+            var allocation = new ResourceAllocation
+            {
+                EmployeeId = employeeId,
+                ResourceId = resourceId,
+                AllocationDate = DateTime.Now
+            };
+            _resourceAllocationRepository.Add(allocation);
+            resource.QuantityAvailable -= 1;
+            _resourceRepository.Update(resource);
+            return resource;
+        }
+        throw new InvalidOperationException("Resource not available");
+    }
+
+    public void ReleaseResource(int employeeId, int resourceId)
+    {
+        var allocation = _resourceAllocationRepository.GetByEmployeeAndResource(employeeId, resourceId);
+        if (allocation != null)
+        {
+            allocation.ReturnDate = DateTime.Now;
+            _resourceAllocationRepository.Update(allocation);
+            var resource = _resourceRepository.GetById(resourceId);
+            resource.QuantityAvailable += 1;
+            _resourceRepository.Update(resource);
+        }
+    }
+
+    public IEnumerable<Resource> GetAvailableResources()
+    {
+        return _resourceRepository.GetAll().Where(r => r.QuantityAvailable > 0);
+    }
+}
+        </pre>
+    </main>
+</body>
+</html>

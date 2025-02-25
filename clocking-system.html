@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Approval Microservice</title>
+    <title>Clocking System Microservice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,21 +42,21 @@
 </head>
 <body>
     <header>
-        <h1>Approval Microservice</h1>
+        <h1>Clocking System Microservice</h1>
     </header>
     <main>
         <h2>Responsibilities</h2>
-        <p>Manage approval workflows for various requests (e.g., leave requests, resource requests), route requests to the appropriate managers for approval.</p>
+        <p>Manage employee clock-in and clock-out times using RFID, track hours worked by employees, and generate monthly work hour reports.</p>
         
         <h2>Endpoints</h2>
         <ul>
-            <li>POST /request-approval - Submit a request for approval.</li>
-            <li>POST /approve-request - Approve a request.</li>
-            <li>GET /approval-status/{requestId} - Retrieve the status of a specific request.</li>
+            <li>POST /clock-in - Record clock-in time.</li>
+            <li>POST /clock-out - Record clock-out time.</li>
+            <li>GET /work-hours/{employeeId} - Retrieve work hours for a specific employee.</li>
         </ul>
         
         <h2>Database Models</h2>
-        <h3>Approval Table</h3>
+        <h3>Clocking Table</h3>
         <table>
             <tr>
                 <th>Field Name</th>
@@ -64,14 +64,9 @@
                 <th>Constraints</th>
             </tr>
             <tr>
-                <td>approval_id</td>
+                <td>clocking_id</td>
                 <td>INT</td>
                 <td>PRIMARY KEY, AUTO_INCREMENT</td>
-            </tr>
-            <tr>
-                <td>request_id</td>
-                <td>INT</td>
-                <td>NOT NULL</td>
             </tr>
             <tr>
                 <td>employee_id</td>
@@ -79,59 +74,54 @@
                 <td>FOREIGN KEY (references Employee)</td>
             </tr>
             <tr>
-                <td>approver_id</td>
-                <td>INT</td>
-                <td>FOREIGN KEY (references Employee)</td>
-            </tr>
-            <tr>
-                <td>status</td>
-                <td>VARCHAR(20)</td>
+                <td>clock_in_time</td>
+                <td>DATETIME</td>
                 <td>NOT NULL</td>
             </tr>
             <tr>
-                <td>approval_date</td>
-                <td>DATE</td>
+                <td>clock_out_time</td>
+                <td>DATETIME</td>
                 <td></td>
+            </tr>
+            <tr>
+                <td>work_date</td>
+                <td>DATE</td>
+                <td>NOT NULL</td>
             </tr>
         </table>
         
         <h2>Essential Methods and Helpers</h2>
         <pre>
-public class ApprovalService
+public class ClockingSystemService
 {
-    private readonly ApprovalRepository _approvalRepository;
+    private readonly ClockingRepository _clockingRepository;
 
-    public ApprovalService(ApprovalRepository approvalRepository)
+    public ClockingSystemService(ClockingRepository clockingRepository)
     {
-        _approvalRepository = approvalRepository;
+        _clockingRepository = clockingRepository;
     }
 
-    public void RequestApproval(int requestId, int employeeId, int approverId)
+    public ClockingRecord ClockIn(int employeeId)
     {
-        var approval = new Approval
+        var clockingRecord = new ClockingRecord
         {
-            RequestId = requestId,
             EmployeeId = employeeId,
-            ApproverId = approverId,
-            Status = "Pending"
+            ClockInTime = DateTime.Now,
+            WorkDate = DateTime.Now.Date
         };
-        _approvalRepository.Add(approval);
+        return _clockingRepository.Add(clockingRecord);
     }
 
-    public void ApproveRequest(int requestId, int approverId)
+    public ClockingRecord ClockOut(int employeeId)
     {
-        var approval = _approvalRepository.GetByRequestIdAndApproverId(requestId, approverId);
-        if (approval != null)
-        {
-            approval.Status = "Approved";
-            approval.ApprovalDate = DateTime.Now;
-            _approvalRepository.Update(approval);
-        }
+        var clockingRecord = _clockingRepository.GetByEmployeeAndDate(employeeId, DateTime.Now.Date);
+        clockingRecord.ClockOutTime = DateTime.Now;
+        return _clockingRepository.Update(clockingRecord);
     }
 
-    public Approval GetApprovalStatus(int requestId)
+    public IEnumerable<ClockingRecord> GetWorkHours(int employeeId)
     {
-        return _approvalRepository.GetByRequestId(requestId);
+        return _clockingRepository.GetByEmployeeId(employeeId);
     }
 }
         </pre>

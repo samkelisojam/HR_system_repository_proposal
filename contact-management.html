@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Communication Microservice</title>
+    <title>Contact Management Microservice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,20 +42,20 @@
 </head>
 <body>
     <header>
-        <h1>Communication Microservice</h1>
+        <h1>Contact Management Microservice</h1>
     </header>
     <main>
         <h2>Responsibilities</h2>
-        <p>Facilitate communication between employees and managers, manage notifications and messages.</p>
+        <p>Manage employee contact information, update and retrieve contact details.</p>
         
         <h2>Endpoints</h2>
         <ul>
-            <li>POST /send-message - Send a message to an employee or manager.</li>
-            <li>GET /messages/{employeeId} - Retrieve messages for a specific employee.</li>
+            <li>POST /contact - Add or update contact information.</li>
+            <li>GET /contact/{employeeId} - Retrieve contact information for a specific employee.</li>
         </ul>
         
         <h2>Database Models</h2>
-        <h3>Message Table</h3>
+        <h3>Contact Table</h3>
         <table>
             <tr>
                 <th>Field Name</th>
@@ -63,58 +63,55 @@
                 <th>Constraints</th>
             </tr>
             <tr>
-                <td>message_id</td>
+                <td>contact_id</td>
                 <td>INT</td>
                 <td>PRIMARY KEY, AUTO_INCREMENT</td>
             </tr>
             <tr>
-                <td>sender_id</td>
+                <td>employee_id</td>
                 <td>INT</td>
                 <td>FOREIGN KEY (references Employee)</td>
             </tr>
             <tr>
-                <td>receiver_id</td>
-                <td>INT</td>
-                <td>FOREIGN KEY (references Employee)</td>
-            </tr>
-            <tr>
-                <td>message_content</td>
-                <td>TEXT</td>
+                <td>contact_type</td>
+                <td>VARCHAR(50)</td>
                 <td>NOT NULL</td>
             </tr>
             <tr>
-                <td>sent_date</td>
-                <td>DATETIME</td>
+                <td>contact_value</td>
+                <td>VARCHAR(100)</td>
                 <td>NOT NULL</td>
             </tr>
         </table>
         
         <h2>Essential Methods and Helpers</h2>
         <pre>
-public class CommunicationService
+public class ContactManagementService
 {
-    private readonly MessageRepository _messageRepository;
+    private readonly ContactRepository _contactRepository;
 
-    public CommunicationService(MessageRepository messageRepository)
+    public ContactManagementService(ContactRepository contactRepository)
     {
-        _messageRepository = messageRepository;
+        _contactRepository = contactRepository;
     }
 
-    public Message SendMessage(int senderId, int receiverId, string messageContent)
+    public Contact AddOrUpdateContact(Contact contact)
     {
-        var message = new Message
+        var existingContact = _contactRepository.GetByEmployeeIdAndType(contact.EmployeeId, contact.ContactType);
+        if (existingContact != null)
         {
-            SenderId = senderId,
-            ReceiverId = receiverId,
-            MessageContent = messageContent,
-            SentDate = DateTime.Now
-        };
-        return _messageRepository.Add(message);
+            existingContact.ContactValue = contact.ContactValue;
+            return _contactRepository.Update(existingContact);
+        }
+        else
+        {
+            return _contactRepository.Add(contact);
+        }
     }
 
-    public IEnumerable<Message> GetMessagesByEmployeeId(int employeeId)
+    public Contact GetContactByEmployeeId(int employeeId)
     {
-        return _messageRepository.GetByEmployeeId(employeeId);
+        return _contactRepository.GetByEmployeeId(employeeId);
     }
 }
         </pre>

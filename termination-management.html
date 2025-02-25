@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporting Microservice</title>
+    <title>Termination Management Microservice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,41 +42,43 @@
 </head>
 <body>
     <header>
-        <h1>Reporting Microservice</h1>
+        <h1>Termination Management Microservice</h1>
     </header>
     <main>
         <h2>Responsibilities</h2>
-        <p>Generate various administrative and operational reports, provide insights and analytics based on employee data.</p>
+        <p>Handle employee termination processes, remove employee entries from all systems upon termination.</p>
         
         <h2>Endpoints</h2>
         <ul>
-            <li>GET /reports - Retrieve a list of available reports.</li>
-            <li>POST /generate-report - Generate a specific report.</li>
+            <li>POST /terminate-employee - Terminate an employee and remove entries from all systems.</li>
         </ul>
-        
-        <h2>Database Models</h2>
-        <p>This microservice will generate reports based on data from other microservices. It will not have its own database tables but will query the databases of other microservices as needed.</p>
         
         <h2>Essential Methods and Helpers</h2>
         <pre>
-public class ReportingService
+public class TerminationManagementService
 {
     private readonly EmployeeManagementService _employeeManagementService;
+    private readonly AccessControlService _accessControlService;
+    private readonly ResourceManagementService _resourceManagementService;
     private readonly ClockingSystemService _clockingSystemService;
     private readonly PayrollService _payrollService;
 
-    public ReportingService(EmployeeManagementService employeeManagementService, ClockingSystemService clockingSystemService, PayrollService payrollService)
+    public TerminationManagementService(EmployeeManagementService employeeManagementService, AccessControlService accessControlService, ResourceManagementService resourceManagementService, ClockingSystemService clockingSystemService, PayrollService payrollService)
     {
         _employeeManagementService = employeeManagementService;
+        _accessControlService = accessControlService;
+        _resourceManagementService = resourceManagementService;
         _clockingSystemService = clockingSystemService;
         _payrollService = payrollService;
     }
 
-    public Report GenerateReport(string reportType, DateTime startDate, DateTime endDate)
+    public void TerminateEmployee(int employeeId)
     {
-        // Generate report based on the report type and date range
-        // For example, employee attendance report, payroll report, etc.
-        // Use data from EmployeeManagementService, ClockingSystemService, and PayrollService
+        _employeeManagementService.DeleteEmployee(employeeId);
+        _accessControlService.RevokeAllAccess(employeeId);
+        _resourceManagementService.ReleaseAllResources(employeeId);
+        _clockingSystemService.RemoveClockingRecords(employeeId);
+        _payrollService.RemovePayslipRecords(employeeId);
     }
 }
         </pre>

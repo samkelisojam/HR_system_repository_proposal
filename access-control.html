@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Control Microservice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        main {
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Access Control Microservice</h1>
+    </header>
+    <main>
+        <h2>Responsibilities</h2>
+        <p>Manage access to different systems based on employee roles, assign and revoke access permissions.</p>
+        
+        <h2>Endpoints</h2>
+        <ul>
+            <li>POST /assign-access - Assign access to a system for an employee.</li>
+            <li>POST /revoke-access - Revoke access to a system for an employee.</li>
+            <li>GET /access/{employeeId} - Retrieve access details for a specific employee.</li>
+        </ul>
+        
+        <h2>Database Models</h2>
+        <h3>Access Table</h3>
+        <table>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
+            </tr>
+            <tr>
+                <td>access_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
+            </tr>
+            <tr>
+                <td>employee_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Employee)</td>
+            </tr>
+            <tr>
+                <td>system_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references System)</td>
+            </tr>
+            <tr>
+                <td>access_granted</td>
+                <td>BOOLEAN</td>
+                <td>NOT NULL</td>
+            </tr>
+        </table>
+        
+        <h3>System Table</h3>
+        <table>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
+            </tr>
+            <tr>
+                <td>system_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
+            </tr>
+            <tr>
+                <td>system_name</td>
+                <td>VARCHAR(100)</td>
+                <td>NOT NULL, UNIQUE</td>
+            </tr>
+        </table>
+        
+        <h2>Essential Methods and Helpers</h2>
+        <pre>
+public class AccessControlService
+{
+    private readonly AccessRepository _accessRepository;
+    private readonly SystemRepository _systemRepository;
+
+    public AccessControlService(AccessRepository accessRepository, SystemRepository systemRepository)
+    {
+        _accessRepository = accessRepository;
+        _systemRepository = systemRepository;
+    }
+
+    public Access GrantAccess(int employeeId, int systemId)
+    {
+        var access = new Access
+        {
+            EmployeeId = employeeId,
+            SystemId = systemId,
+            AccessGranted = true
+        };
+
+        return _accessRepository.Add(access);
+    }
+
+    public void RevokeAccess(int employeeId, int systemId)
+    {
+        var access = _accessRepository.GetByEmployeeAndSystem(employeeId, systemId);
+        if (access != null)
+        {
+            access.AccessGranted = false;
+            _accessRepository.Update(access);
+        }
+    }
+
+    public IEnumerable<Access> GetAccessDetails(int employeeId)
+    {
+        return _accessRepository.GetByEmployeeId(employeeId);
+    }
+}
+        </pre>
+    </main>
+</body>
+</html>

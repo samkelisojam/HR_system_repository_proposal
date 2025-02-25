@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Communication Microservice</title>
+    <title>Employee Agreement Microservice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,20 +42,21 @@
 </head>
 <body>
     <header>
-        <h1>Communication Microservice</h1>
+        <h1>Employee Agreement Microservice</h1>
     </header>
     <main>
         <h2>Responsibilities</h2>
-        <p>Facilitate communication between employees and managers, manage notifications and messages.</p>
+        <p>Manage agreements and handovers between employees and the company, track agreement statuses and history.</p>
         
         <h2>Endpoints</h2>
         <ul>
-            <li>POST /send-message - Send a message to an employee or manager.</li>
-            <li>GET /messages/{employeeId} - Retrieve messages for a specific employee.</li>
+            <li>POST /create-agreement - Create a new agreement.</li>
+            <li>GET /agreements/{employeeId} - Retrieve agreements for a specific employee.</li>
+            <li>POST /complete-agreement - Mark an agreement as completed.</li>
         </ul>
         
         <h2>Database Models</h2>
-        <h3>Message Table</h3>
+        <h3>Agreement Table</h3>
         <table>
             <tr>
                 <th>Field Name</th>
@@ -63,58 +64,62 @@
                 <th>Constraints</th>
             </tr>
             <tr>
-                <td>message_id</td>
+                <td>agreement_id</td>
                 <td>INT</td>
                 <td>PRIMARY KEY, AUTO_INCREMENT</td>
             </tr>
             <tr>
-                <td>sender_id</td>
+                <td>employee_id</td>
                 <td>INT</td>
                 <td>FOREIGN KEY (references Employee)</td>
             </tr>
             <tr>
-                <td>receiver_id</td>
-                <td>INT</td>
-                <td>FOREIGN KEY (references Employee)</td>
-            </tr>
-            <tr>
-                <td>message_content</td>
+                <td>agreement_content</td>
                 <td>TEXT</td>
                 <td>NOT NULL</td>
             </tr>
             <tr>
-                <td>sent_date</td>
-                <td>DATETIME</td>
+                <td>agreement_date</td>
+                <td>DATE</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>status</td>
+                <td>VARCHAR(20)</td>
                 <td>NOT NULL</td>
             </tr>
         </table>
         
         <h2>Essential Methods and Helpers</h2>
         <pre>
-public class CommunicationService
+public class EmployeeAgreementService
 {
-    private readonly MessageRepository _messageRepository;
+    private readonly AgreementRepository _agreementRepository;
 
-    public CommunicationService(MessageRepository messageRepository)
+    public EmployeeAgreementService(AgreementRepository agreementRepository)
     {
-        _messageRepository = messageRepository;
+        _agreementRepository = agreementRepository;
     }
 
-    public Message SendMessage(int senderId, int receiverId, string messageContent)
+    public Agreement CreateAgreement(Agreement agreement)
     {
-        var message = new Message
+        return _agreementRepository.Add(agreement);
+    }
+
+    public IEnumerable<Agreement> GetAgreementsByEmployeeId(int employeeId)
+    {
+        return _agreementRepository.GetByEmployeeId(employeeId);
+    }
+
+    public Agreement CompleteAgreement(int agreementId)
+    {
+        var agreement = _agreementRepository.GetById(agreementId);
+        if (agreement != null)
         {
-            SenderId = senderId,
-            ReceiverId = receiverId,
-            MessageContent = messageContent,
-            SentDate = DateTime.Now
-        };
-        return _messageRepository.Add(message);
-    }
-
-    public IEnumerable<Message> GetMessagesByEmployeeId(int employeeId)
-    {
-        return _messageRepository.GetByEmployeeId(employeeId);
+            agreement.Status = "Completed";
+            _agreementRepository.Update(agreement);
+        }
+        return agreement;
     }
 }
         </pre>

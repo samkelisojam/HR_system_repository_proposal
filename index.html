@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Onboarding Microservices</title>
+    <title>Employee Onboarding and Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,108 +13,186 @@
             background-color: #f4f4f4;
         }
         header {
-            background: #007BFF;
-            color: white;
-            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
             text-align: center;
+            padding: 1rem 0;
         }
-        h1 {
-            margin: 0;
+        nav {
+            background-color: black;
+            padding: 1rem;
         }
-        .container {
-            width: 80%;
-            margin: 20px auto;
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
         }
-        .service {
-            background: white;
-            border: 1px solid #ddd;
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: rgb(97, 223, 124);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 2rem;
+            justify-content: space-between;
+        }
+        section {
+            flex: 1 1 45%; /* Flex-grow, flex-shrink, flex-basis */
+            margin: 1rem;
+            padding: 1.5rem;
+            background-color: #fff;
             border-radius: 5px;
-            padding: 20px;
-            margin: 10px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
         }
-        .service h2 {
-            margin-top: 0;
+        section:hover {
+            transform: scale(1.02);
         }
-        .service a {
+        h1, h2, h3 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            background-color: #e9ecef;
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .back-link {
             display: inline-block;
-            margin-top: 10px;
+            margin-top: 20px;
             padding: 10px 15px;
             background: #007BFF;
             color: white;
             text-decoration: none;
             border-radius: 5px;
         }
-        .service a:hover {
-            background: #0056b3;
+        .back-link:hover {
+            background: #c9ccc9;
+        }
+        .progress-checklist {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .progress-checklist input {
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Employee Onboarding Microservices</h1>
+        <h1>Employee Onboarding and Management System</h1>
     </header>
-    <div class="container">
-        <div class="service">
-            <h2>Employee Management Microservice</h2>
-            <p>Manage employee records and details.</p>
-            <a href="employee_management.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Clocking System Microservice</h2>
-            <p>Track employee attendance and clocking.</p>
-            <a href="clocking_system.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Payroll Microservice</h2>
-            <p>Calculate and manage employee salaries.</p>
-            <a href="payroll.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Access Control Microservice</h2>
-            <p>Manage access to various systems.</p>
-            <a href="access_control.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Resource Management Microservice</h2>
-            <p>Manage resources required for employees.</p>
-            <a href="resource_management.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Reporting Microservice</h2>
-            <p>Generate reports for administration.</p>
-            <a href="reporting.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Leave Management Microservice</h2>
-            <p>Manage employee leave requests.</p>
-            <a href="leave_management.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Contact Management Microservice</h2>
-            <p>Manage employee contact information.</p>
-            <a href="contact_management.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Termination Management Microservice</h2>
-            <p>Manage employee termination processes.</p>
-            <a href="termination_management.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Approval Microservice</h2>
-            <p>Handle approval requests for various actions.</p>
-            <a href="approval.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Communication Microservice</h2>
-            <p>Facilitate communication between employees and management.</p>
-            <a href="communication.html">Learn More</a>
-        </div>
-        <div class="service">
-            <h2>Employee Agreement Microservice</h2>
-            <p>Manage employee agreements and handovers.</p>
-            <a href="employee_agreement.html">Learn More</a>
-        </div>
-    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="employee-management.html">Employee Management</a></li>
+            <li><a href="clocking-system.html">Clocking System</a></li>
+            <li><a href="payroll.html">Payroll</a></li>
+            <li><a href="access-control.html">Access Control</a></li>
+            <li><a href="resource-management.html">Resource Management</a></li>
+            <li><a href="reporting.html">Reporting</a></li>
+            <li><a href="leave-management.html">Leave Management</a></li>
+            <li><a href="contact-management.html">Contact Management</a></li>
+            <li><a href="termination-management.html">Termination Management</a></li>
+            <li><a href="approval.html">Approval</a></li>
+            <li><a href="communication.html">Communication</a></li>
+            <li><a href="employee-agreement.html">Employee Agreement</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section>
+            <h2>Project Overview</h2>
+            <p>This project involves the development of an Employee Onboarding and Management System using a microservice architecture. The project will span 6 months and involve 7 developers, each responsible for two microservices, with additional roles for testing and security.</p>
+            <p>This system aims to streamline the onboarding process, improve employee management, and enhance overall operational efficiency. By utilizing microservices, we ensure scalability and maintainability, allowing for easier updates and integration of new features in the future.</p>
+            <p>We will be using <strong>.NET Web API</strong> for backend development and <strong>GitHub</strong> for version control and collaboration.</p>
+        </section>
+        <section>
+            <h2>User Roles in the System</h2>
+            <ul>
+                <li><strong>Project Leader:</strong> Oversees the project and coordinates between teams.</li>
+                <li><strong>Developers:</strong> Responsible for building and maintaining microservices.</li>
+                <li><strong>QA Engineers:</strong> Conduct testing to ensure quality and functionality.</li>
+                <li><strong>Security Lead:</strong> Ensures that security measures are implemented.</li>
+                <li><strong>DevOps Engineer:</strong> Manages deployment and CI/CD processes.</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Microservices</h2>
+            <p>Click on any microservice to learn more:</p>
+            <ul>
+                <li><i class="fas fa-user-tie"></i> <a href="employee-management.html">Employee Management Microservice</a></li>
+                <li><i class="fas fa-clock"></i> <a href="clocking-system.html">Clocking System Microservice</a></li>
+                <li><i class="fas fa-money-bill-wave"></i> <a href="payroll.html">Payroll Microservice</a></li>
+                <li><i class="fas fa-lock"></i> <a href="access-control.html">Access Control Microservice</a></li>
+                <li><i class="fas fa-cogs"></i> <a href="resource-management.html">Resource Management Microservice</a></li>
+                <li><i class="fas fa-chart-line"></i> <a href="reporting.html">Reporting Microservice</a></li>
+                <li><i class="fas fa-plane-departure"></i> <a href="leave-management.html">Leave Management Microservice</a></li>
+                <li><i class="fas fa-address-book"></i> <a href="contact-management.html">Contact Management Microservice</a></li>
+                <li><i class="fas fa-user-slash"></i> <a href="termination-management.html">Termination Management Microservice</a></li>
+                <li><i class="fas fa-check-circle"></i> <a href="approval.html">Approval Microservice</a></li>
+                <li><i class="fas fa-comments"></i> <a href="communication.html">Communication Microservice</a></li>
+                <li><i class="fas fa-file-signature"></i> <a href="employee-agreement.html">Employee Agreement Microservice</a></li>
+            </ul>
+        </section>
+        <section>
+            <h2>Team Structure</h2>
+            <ul>
+                <li>Samkeliso Ndlangamandla - Project Leader</li>
+                <li>Team Lead - Developer 1</li>
+                <li>Lead of Security - Developer 2</li>
+                <li>Testing Lead - Developer 3</li>
+                <li>Developer 4</li>
+                <li>Developer 5</li>
+                <li>Developer 6</li>
+                <li>Developer 7</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Developer Assignments</h2>
+            <ul>
+                <li>Developer 1 - Employee Management Microservice, Clocking System Microservice</li>
+                <li>Developer 2 - Payroll Microservice, Access Control Microservice</li>
+                <li>Developer 3 - Resource Management Microservice, Reporting Microservice</li>
+                <li>Developer 4 - Leave Management Microservice, Contact Management Microservice</li>
+                <li>Developer 5 - Termination Management Microservice, Approval Microservice</li>
+                <li>Developer 6 - Communication Microservice, Employee Agreement Microservice</li>
+                <li>Developer 7 - Assisting other developers and roles as needed</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Project Plan</h2>
+            <p>The project will follow a 6-month sprint duration. Each sprint will focus on specific milestones and deliverables, ensuring the timely completion of the project.</p>
+            <ul>
+                <li>Sprint 1: Initial Setup and Requirement Analysis</li>
+                <li>Sprint 2: Design and Architecture</li>
+                <li>Sprint 3: Development of Core Microservices</li>
+                <li>Sprint 4: Integration and Testing</li>
+                <li>Sprint 5: Final Adjustments and Security Enhancements</li>
+                <li>Sprint 6: Deployment and Documentation</li>
+            </ul>
+        </section>
+  
+    </main>
 </body>
 </html>

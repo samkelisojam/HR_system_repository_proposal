@@ -1,0 +1,325 @@
+
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management Microservice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        main {
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Employee Management Microservice</h1>
+    </header>
+    <main>
+        <h2>Responsibilities</h2>
+        <p>Onboard new employees, create and manage employee profiles, assign company ID, department, reporting manager, and roles, and update employee details as needed.</p>
+        
+        <h2>Endpoints</h2>
+        <ul>
+            <li>POST /employees - Create a new employee.</li>
+            <li>GET /employees/{id} - Retrieve employee details.</li>
+            <li>PUT /employees/{id} - Update employee details.</li>
+            <li>DELETE /employees/{id} - Delete an employee profile.</li>
+        </ul>
+        
+        <h2>Database Models</h2>
+        <h3>Employee Table</h3>
+        <table>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
+            </tr>
+            <tr>
+                <td>employee_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
+            </tr>
+            <tr>
+                <td>first_name</td>
+                <td>VARCHAR(50)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>last_name</td>
+                <td>VARCHAR(50)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>department_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Department)</td>
+            </tr>
+            <tr>
+                <td>reporting_manager</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Employee)</td>
+            </tr>
+            <tr>
+                <td>role_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Role)</td>
+            </tr>
+            <tr>
+                <td>company_id</td>
+                <td>VARCHAR(20)</td>
+                <td>UNIQUE, NOT NULL</td>
+            </tr>
+            <tr>
+                <td>email</td>
+                <td>VARCHAR(100)</td>
+                <td>UNIQUE, NOT NULL</td>
+            </tr>
+            <tr>
+                <td>phone_number</td>
+                <td>VARCHAR(15)</td>
+                <td>UNIQUE</td>
+            </tr>
+            <tr>
+                <td>hire_date</td>
+                <td>DATE</td>
+                <td>NOT NULL</td>
+            </tr>
+        </table>
+        
+        <h2>Essential Methods and Helpers</h2>
+        <pre>
+public class EmployeeManagementService
+{
+    private readonly EmployeeRepository _employeeRepository;
+    private readonly DepartmentRepository _departmentRepository;
+    private readonly RoleRepository _roleRepository;
+
+    public EmployeeManagementService(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository)
+    {
+        _employeeRepository = employeeRepository;
+        _departmentRepository = departmentRepository;
+        _roleRepository = roleRepository;
+    }
+
+    public Employee CreateEmployee(Employee employee)
+    {
+        // Validate employee data
+        // Assign company ID, department, reporting manager, and roles
+        // Save employee to the database
+        return _employeeRepository.Add(employee);
+    }
+
+    public Employee GetEmployeeById(int id)
+    {
+        return _employeeRepository.GetById(id);
+    }
+
+    public Employee UpdateEmployee(int id, Employee updatedEmployee)
+    {
+        // Validate updated employee data
+        // Update employee details in the database
+        return _employeeRepository.Update(id, updatedEmployee);
+    }
+
+    public void DeleteEmployee(int id)
+    {
+        // Remove employee from the database
+        _employeeRepository.Delete(id);
+    }
+}
+        </pre>
+    </main>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management Microservice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        main {
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Employee Management Microservice</h1>
+    </header>
+    <main>
+        <h2>Responsibilities</h2>
+        <p>Onboard new employees, create and manage employee profiles, assign company ID, department, reporting manager, and roles, and update employee details as needed.</p>
+        
+        <h2>Endpoints</h2>
+        <ul>
+            <li>POST /employees - Create a new employee.</li>
+            <li>GET /employees/{id} - Retrieve employee details.</li>
+            <li>PUT /employees/{id} - Update employee details.</li>
+            <li>DELETE /employees/{id} - Delete an employee profile.</li>
+        </ul>
+        
+        <h2>Database Models</h2>
+        <h3>Employee Table</h3>
+        <table>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type</th>
+                <th>Constraints</th>
+            </tr>
+            <tr>
+                <td>employee_id</td>
+                <td>INT</td>
+                <td>PRIMARY KEY, AUTO_INCREMENT</td>
+            </tr>
+            <tr>
+                <td>first_name</td>
+                <td>VARCHAR(50)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>last_name</td>
+                <td>VARCHAR(50)</td>
+                <td>NOT NULL</td>
+            </tr>
+            <tr>
+                <td>department_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Department)</td>
+            </tr>
+            <tr>
+                <td>reporting_manager</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Employee)</td>
+            </tr>
+            <tr>
+                <td>role_id</td>
+                <td>INT</td>
+                <td>FOREIGN KEY (references Role)</td>
+            </tr>
+            <tr>
+                <td>company_id</td>
+                <td>VARCHAR(20)</td>
+                <td>UNIQUE, NOT NULL</td>
+            </tr>
+            <tr>
+                <td>email</td>
+                <td>VARCHAR(100)</td>
+                <td>UNIQUE, NOT NULL</td>
+            </tr>
+            <tr>
+                <td>phone_number</td>
+                <td>VARCHAR(15)</td>
+                <td>UNIQUE</td>
+            </tr>
+            <tr>
+                <td>hire_date</td>
+                <td>DATE</td>
+                <td>NOT NULL</td>
+            </tr>
+        </table>
+        
+        <h2>Essential Methods and Helpers</h2>
+        <pre>
+public class EmployeeManagementService
+{
+    private readonly EmployeeRepository _employeeRepository;
+    private readonly DepartmentRepository _departmentRepository;
+    private readonly RoleRepository _roleRepository;
+
+    public EmployeeManagementService(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, RoleRepository roleRepository)
+    {
+        _employeeRepository = employeeRepository;
+        _departmentRepository = departmentRepository;
+        _roleRepository = roleRepository;
+    }
+
+    public Employee CreateEmployee(Employee employee)
+    {
+        // Validate employee data
+        // Assign company ID, department, reporting manager, and roles
+        // Save employee to the database
+        return _employeeRepository.Add(employee);
+    }
+
+    public Employee GetEmployeeById(int id)
+    {
+        return _employeeRepository.GetById(id);
+    }
+
+    public Employee UpdateEmployee(int id, Employee updatedEmployee)
+    {
+        // Validate updated employee data
+        // Update employee details in the database
+        return _employeeRepository.Update(id, updatedEmployee);
+    }
+
+    public void DeleteEmployee(int id)
+    {
+        // Remove employee from the database
+        _employeeRepository.Delete(id);
+    }
+}
+        </pre>
+    </main>
+</body>
